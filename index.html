@@ -188,7 +188,7 @@ loadFolder.add({loadModel: () => {
         console.clear();
         logs = [];
         const selectedFile = modelController.getValue();
-        loadSTLFile('https://github.com/amfirouz/stl-slicer/main/models'+selectedFile).then((data) => {
+        loadSTLFile('https://amfirouz.github.io/stl-slicer/main/models'+selectedFile).then((data) => {
             // Store the loaded mesh in loadedMesh variable
             loadedMesh = data.mesh;
             originalPosition = data.originalPosition;
