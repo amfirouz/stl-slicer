@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js with Controls</title>
+
+    <!-- Importmap for the modules -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/build/three.module.min.js",
+                "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/controls/OrbitControls.js",
+                "three/examples/jsm/Addons.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/Addons.js",
+                "three/addons/libs/lil-gui.module.min.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/lil-gui.module.min.js",
+                "three/examples/jsm/libs/stats.module.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/stats.module.js",
+                "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.9.0/build/index.module.min.js"
+            }
+        }
+        </script>
+
+</head>
+<body>
+    <h1>Three.js with Orbit Controls</h1>
+
+    <!-- The canvas for the 3D scene will be automatically added here -->
+    <script type="module">
+// Import Three.js and OrbitControls
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { STLLoader } from 'three/examples/jsm/Addons.js';
+import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+import { CSS2DRenderer } from 'three/examples/jsm/Addons.js';
+import { TransformControls } from 'three/examples/jsm/Addons.js';
+import { RoundedBoxGeometry } from 'three/examples/jsm/Addons.js';
+import { MeshBVH, acceleratedRaycast } from 'three-mesh-bvh';
+import { CSS2DObject } from 'three/examples/jsm/Addons.js';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
+
+//#region Setup the scene
+// Initialize Stats.js
+const stats = new Stats();
+document.body.appendChild(stats.dom); // Add the stats panel to the document
+
+// Position the stats panel (default is top left, but can be changed)
+stats.dom.style.position = 'absolute';
+stats.dom.style.top = '0px';
+stats.dom.style.left = '0px';
+// Change the size of the stats window
+stats.dom.style.transform = 'scale(1.5)'; // Scale up by 1.5x
+stats.dom.style.transformOrigin = 'top left'; // Keep the scaling origin at the top-left corner
+
+// Create the scene, camera, and renderer
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// Set up the CSS2DRenderer for labels
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize(window.innerWidth, window.innerHeight);
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0px';
+labelRenderer.domElement.style.pointerEvents = 'none'; // Allow interaction with WebGL canvas
+document.body.appendChild(labelRenderer.domElement);
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
+
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(5, 5, 5);
+scene.add(directionalLight);
+
+// Add OrbitControls to rotate the scene
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+// Call createPlanesAndLabels from planeSetup.js to add planes and labels
+const width = 10;
+const height = 10;
+const materialXY = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide, opacity: 0.3, transparent: true,
+        depthWrite: false,  // Avoids writing to the depth buffer for transparency
+        depthTest: true     // Ensures proper transparency rendering behind other objects
+    });
+    const materialXZ = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide, opacity: 0.3, transparent: true,
+        depthWrite: false,  // Avoids writing to the depth buffer for transparency
+        depthTest: true     // Ensures proper transparency rendering behind other objects
+     });
+    const materialYZ = new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide, opacity: 0.3, transparent: true,
+        depthWrite: false,  // Avoids writing to the depth buffer for transparency
+        depthTest: true     // Ensures proper transparency rendering behind other objects
+     });
+
+// Plane geometry
+const planeGeometry = new THREE.PlaneGeometry(width * 2, height * 2);
+
+// Create the planes
+const planeXY = new THREE.Mesh(planeGeometry, materialXY);
+const planeXZ = new THREE.Mesh(planeGeometry, materialXZ);
+const planeYZ = new THREE.Mesh(planeGeometry, materialYZ);
+
+// Rotate the planes correctly
+planeXY.rotation.z = 0;               // XY Plane (no rotation needed)
+planeXZ.rotation.x = Math.PI / 2;      // XZ Plane (rotate 90° around X-axis)
+planeYZ.rotation.y = Math.PI / 2;      // YZ Plane (rotate 90° around Y-axis)
+
+// Position planes correctly (keeping them centered at origin)
+planeXY.position.set(0, 0, 0);
+planeXZ.position.set(0, 0, 0);
+planeYZ.position.set(0, 0, 0);
+
+// Add planes to the scene
+scene.add(planeXY);
+scene.add(planeXZ);
+scene.add(planeYZ);
+
+// Function to create labels
+function createLabel(text, position) {
+    const labelDiv = document.createElement('div');
+    labelDiv.className = 'label';
+    labelDiv.style.position = 'absolute';
+    labelDiv.style.color = 'white';
+    labelDiv.style.fontSize = '20px';
+    labelDiv.style.pointerEvents = 'none'; // Ensure labels don't block interactions
+    labelDiv.innerText = text;
+
+    const labelObject = new CSS2DObject(labelDiv);
+    labelObject.position.set(position.x, position.y, position.z);
+
+    return labelObject;
+}
+
+// Labels for X, Y, Z axes with proper spacing
+const labelSpacing = 1.5; // Increased spacing for better readability
+const labelX = createLabel('X', new THREE.Vector3(width + labelSpacing, 0, 0));  // Label for X at the edge of XY
+const labelY = createLabel('Y', new THREE.Vector3(0, height + labelSpacing, 0)); // Label for Y at the edge of XZ
+const labelZ = createLabel('Z', new THREE.Vector3(0, 0, width + labelSpacing));  // Label for Z at the edge of YZ
+
+// Add the labels to the scene
+scene.add(labelX);
+scene.add(labelY);
+scene.add(labelZ);
+// Create an AxesHelper with a size of 5 (can be adjusted)
+const axesHelper = new THREE.AxesHelper(10);
+scene.add(axesHelper);
+
+//#endregion
+
+// Load STL file
+let instancedMesh, voxelGeometry, voxelMaterial;
+let dummy, rayCaster, rayCasterIntersects = [];
+let voxels = [];
+let logs = []; // Array to store previous logs
+let lastBoundingBox;
+let gizmo;
+let loadedMesh = null;
+const voxelSize = 0.1;
+const gridSize = 0.1;
+const threshold = 0.1;
+let updateDelay = 50; // Delay in milliseconds (adjust as needed)
+THREE.Mesh.prototype.raycast = acceleratedRaycast;
+dummy = new THREE.Object3D();
+// Variables to store original transformation
+let originalPosition = new THREE.Vector3();
+let originalRotation = new THREE.Euler();
+let originalScale = new THREE.Vector3();
+
+// Create a dropdown for selecting the STL file and a button to load it
+// Initialize the GUI for controlling the app
+const gui = new GUI();
+
+// Available STL files in the dropdown
+const files = [
+    "/heart.stl",
+    "/heart_reduced.stl",
+    "/middle.stl",
+    "/sample.stl"
+];
+
+// Create a file selector in the GUI
+const loadFolder = gui.addFolder('Model Loader');
+const modelController = loadFolder.add({ model: files[0] }, 'model', files).name('Select STL File');
+
+// Create the button outside the load function
+loadFolder.add({loadModel: () => {
+        // Get the selected model from the dropdown and load it
+        console.clear();
+        logs = [];
+        const selectedFile = modelController.getValue();
+        loadSTLFile(+selectedFile).then((data) => {
+            // Store the loaded mesh in loadedMesh variable
+            loadedMesh = data.mesh;
+            originalPosition = data.originalPosition;
+            originalRotation = data.originalRotation
+            originalScale = data.originalScale;
+
+            // Optionally handle other data (originalPosition, originalRotation, originalScale)
+            // For example, you can store these to reset the mesh later if needed.
+        }).catch((error) => {
+            console.error("Error loading the model:", error);
+        });
+    }
+}, 'loadModel').name('Load Model');
+
+const transformControl = new TransformControls(camera, renderer.domElement);
+
+  //#region Visibility Controls for planes, model and transform controls
+    planeXZ.visible = false;
+    planeYZ.visible = false;
+  const visibilityControl = {
+    visible: true
+  };
+  const planeFolder = gui.addFolder('Plane Settings');
+  planeFolder.add(visibilityControl, 'visible').name('Plane XY Visible').onChange(function () {
+    planeXY.visible = visibilityControl.visible;
+  });
+  planeFolder.add(visibilityControl, 'visible').name('Plane XZ Visible').onChange(function () {
+    planeXZ.visible = visibilityControl.visible;
+  });
+  planeFolder.add(visibilityControl, 'visible').name('Plane YZ Visible').onChange(function () {
+    planeYZ.visible = visibilityControl.visible;
+  });
+// Add visibility toggle inside another folder
+const viewFolder = gui.addFolder('Model Visibility');
+viewFolder.add(visibilityControl, 'visible').name('Model Visible').onChange(function () {
+    if (loadedMesh) {
+        loadedMesh.visible = visibilityControl.visible;
+    }
+});
+
+viewFolder.add(visibilityControl, 'visible').name('Controls Visible').onChange(function () {
+    gizmo.visible = visibilityControl.visible;
+  });
+
+// Disable Trackball_ when Transform_ are active
+transformControl.addEventListener('mouseDown', () => {
+    controls.enabled = false; // Disable trackball controls
+});
+
+transformControl.addEventListener('mouseUp', () => {
+    controls.enabled = true; // Re-enable trackball controls
+});
+
+// Optional: Disable Trackball_ when Transform_ are hovered
+transformControl.addEventListener('hover', (event) => {
+    controls.enabled = !event.value; // Disable if hover is true
+});
+
+transformControl.addEventListener('objectChange', () => {
+    if (transformControl.mode === "scale" && loadedMesh) {
+        const avgScale = (loadedMesh.scale.x + loadedMesh.scale.y + loadedMesh.scale.z) / 3;
+        loadedMesh.scale.set(avgScale, avgScale, avgScale);
+    }
+});
+
+// GUI Controls
+const guiControls = {
+resetModel: function () {
+    if (loadedMesh) {
+        loadedMesh.position.copy(originalPosition);
+        loadedMesh.rotation.copy(originalRotation);
+        loadedMesh.scale.copy(originalScale);
+        updateVoxelization();
+        console.log("Model reset to original position");
+    }
+}
+};
+
+// Add Reset Button to GUI
+loadFolder.add(guiControls, 'resetModel').name("Reset Model");
+gui.add({ 
+    update: () => {
+        console.log("Update button pressed");
+        if (!loadedMesh) {
+            console.warn("No loaded mesh. Please load a model first.");
+            return;
+        }
+
+        console.log("Starting voxel update...");
+        updateVoxelization();
+    }
+}, 'update').name('Update Intersection');
+
+   
+const liveUpdateControl = { liveUpdate: false };
+// Add the checkbox to the GUI for enabling/disabling live updates
+gui.add(liveUpdateControl, 'liveUpdate').name('Live Update').onChange(() => {
+    if (liveUpdateControl.liveUpdate) {
+        // When live update is enabled, start updating the intersection continuously
+        scheduleVoxelUpdate();
+    }
+});
+let updateTimeout = null;
+
+gui.add({ updateDelay: 50 }, 'updateDelay', 10, 100, 1).name('Update Delay (ms)').onChange((value) => {
+    console.log('Update Delay set to: ' + value);
+    // Update the global updateDelay variable
+    updateDelay = value;  // Directly update the global variable
+});
+
+//#region functions
+// Create a function to load the selected STL file
+function loadSTLFile(fileName) {
+    return new Promise((resolve, reject) => {
+        const loader = new STLLoader();
+        if (loadedMesh) {
+            scene.remove(loadedMesh);  // Remove the previous mesh from the scene
+            transformControl.detach(loadedMesh);  // Detach the transform controls from the previous mesh
+            loadedMesh.geometry.dispose();
+            loadedMesh.material.dispose();
+        }
+        if (instancedMesh) {
+            scene.remove(instancedMesh);  // Remove the previous mesh from the scene
+            transformControl.detach(instancedMesh);  // Detach the transform controls from the previous mesh
+            instancedMesh.geometry.dispose();
+            instancedMesh.material.dispose();
+        }
+        loader.load(fileName, function (geometry) {
+            // Compute bounding box to center the model
+            console.log("STL Geometry Loaded:", geometry);
+
+            //Center the model
+            geometry.computeBoundingBox();
+            const bbox = geometry.boundingBox;
+            const center = new THREE.Vector3();
+            bbox.getCenter(center);
+            geometry.translate(-center.x, -center.y, -center.z);
+            console.log("Model Center Position:", center);
+            // Compute smooth shading and create the mesh
+            geometry.computeVertexNormals();
+            const stlMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+            const mesh = new THREE.Mesh(geometry, stlMaterial);
+
+            // Apply initial transformations
+            mesh.rotation.set(0, 0, 0);
+            const scalingFactor = 0.1;
+            mesh.scale.set(scalingFactor, scalingFactor, scalingFactor);
+
+            // Store original transformation values
+            originalPosition = mesh.position.clone();
+            originalRotation = mesh.rotation.clone();
+            originalScale = mesh.scale.clone();
+
+            // Add the new mesh to the scene
+            scene.add(mesh);
+            console.log("Mesh successfully added to the scene:", mesh);
+            transformControl.attach(mesh);  // Attach the transform controls to the new mesh
+            transformControl.setMode("rotate");
+
+            window.addEventListener('keydown', (event) => {
+                switch (event.key) {
+                    case 'r': 
+                        transformControl.setMode("rotate");
+                        transformControl.showX = true;
+                        transformControl.showY = true;
+                        transformControl.showZ = true;
+                        break;
+                    case 't': 
+                        transformControl.setMode("translate");
+                        transformControl.showX = true;
+                        transformControl.showY = true;
+                        transformControl.showZ = true;
+                        break;
+                    case 's': 
+                        transformControl.setMode("scale");
+                        transformControl.showX = false;
+                        transformControl.showY = true;
+                        transformControl.showZ = false;
+                        break;
+                }
+            });
+
+            gizmo = transformControl.getHelper();
+            scene.add(gizmo);
+
+            // Resolve the promise with relevant data (mesh and original values)
+            resolve({ mesh, originalPosition, originalRotation, originalScale });
+        },
+        undefined, // Progress callback (optional)
+        function (error) {
+            console.error("Error loading STL file:", error);
+            reject(error);
+        });
+    });
+};
+
+// Optimised voxelisation with plane slicing
+function voxelizeMesh(mesh, gridSize = 0.1, threshold = 0.1) {
+    if (!mesh || !mesh.geometry) {
+        console.warn('No mesh loaded.');
+        return;
+    }
+
+    const bvh = new MeshBVH(mesh.geometry, { lazyGeneration: false });
+    mesh.geometry.boundsTree = bvh;
+    
+    const boundingBox = new THREE.Box3().setFromObject(mesh);
+    const minX = boundingBox.min.x, maxX = boundingBox.max.x;
+    const minY = boundingBox.min.y, maxY = boundingBox.max.y;
+    const minZ = boundingBox.min.z, maxZ = boundingBox.max.z;
+    
+    console.clear();
+    console.time("Voxelization time:");
+    voxels = []; // Reset the voxel list
+
+    let count = 0;
+    let count_total = 0;
+    let totalVoxels = Math.ceil((maxX - minX) / gridSize) * Math.ceil((maxY - minY) / gridSize) * Math.ceil((maxZ - minZ) / gridSize);
+    console.log(`Total voxels in slice: ${totalVoxels}`);
+    
+    for (let x = minX; x < maxX; x += gridSize) {
+        for (let y = minY; y < maxY; y += gridSize) {
+            for (let z = (-threshold/2); z < (threshold/2); z += gridSize) {
+                const voxelPosition = new THREE.Vector3(x + gridSize / 2, y + gridSize / 2, z + gridSize / 2);
+                count_total ++
+                if (isInsideMesh3D(voxelPosition, mesh )) {
+                    voxels.push({ position: voxelPosition });
+                    count ++;
+                }
+            }
+        }
+    }
+
+    console.log(`Voxelization complete. Total voxels placed: ${count}/${count_total}`);
+    console.timeEnd("Voxelization time:");
+    logs.forEach(log => console.log(log));
+}
+
+function isInsideMesh3D(pos, mesh, bvh) {
+    const directions = [
+        new THREE.Vector3(1, 0, 0), // X-axis
+        //new THREE.Vector3(0, 1, 0), // Y-axis
+        //new THREE.Vector3(0, 0, 1)  // Z-axis
+    ];
+
+    let insideCount = 0;
+
+    for (const dir of directions) {
+        const ray = new THREE.Raycaster(pos, dir);
+        ray.firstHitOnly = false; // Optimize by considering only the first intersection
+        const intersections = ray.intersectObject(mesh, false);
+        if (intersections.length % 2 === 1) {
+            insideCount++; // If odd intersections, the point is inside along this direction
+        }
+    }
+
+    // The voxel is considered inside if at least two out of three checks confirm it
+    return insideCount >= directions.length;
+}
+
+function recreateVoxels() {
+    for (let i = 0; i < voxels.length; i++) {
+        dummy.position.copy(voxels[i].position);
+        dummy.updateMatrix();
+        instancedMesh.setMatrixAt(i, dummy.matrix);
+    }
+    instancedMesh.instanceMatrix.needsUpdate = true;
+}
+
+// Function to update voxelization
+function updateVoxelization() {
+    // Remove existing instanced mesh before updating
+    if (instancedMesh) {
+        scene.remove(instancedMesh);
+    }
+
+    voxelizeMesh(loadedMesh, gridSize, threshold);
+
+    voxelGeometry = new THREE.BoxGeometry(voxelSize, voxelSize, voxelSize);
+    voxelMaterial = new THREE.MeshLambertMaterial({ color: new THREE.Color(0xeeee22) });
+    instancedMesh = new THREE.InstancedMesh(voxelGeometry, voxelMaterial, voxels.length);
+    instancedMesh.castShadow = true;
+    instancedMesh.receiveShadow = true;
+    scene.add(instancedMesh);
+    recreateVoxels();
+}
+
+// Debounced update function
+function scheduleVoxelUpdate() {
+    if (!liveUpdateControl.liveUpdate) return;
+    
+    clearTimeout(updateTimeout); // Cancel previous update
+    updateTimeout = setTimeout(updateVoxelization, updateDelay);
+}
+
+// Utility function to log and store messages and variables
+function logAndStore(...args) {
+    console.log(...args);  // Log the messsage/variables to the console (same behavior as console.log)
+    logs.push(args); // Store the message/variables in the logs array
+}
+//#endregion
+
+// Attach event listener to TransformControls for live updates
+transformControl.addEventListener('objectChange', () => {
+    // Trigger an update when the mesh is transformed (moved, scaled, rotated)
+    scheduleVoxelUpdate();
+});
+
+// Position the camera
+camera.position.set(3, 3, 5);
+camera.lookAt(scene.position);
+
+// Render loop
+function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+    labelRenderer.render(scene, camera);  // Render CSS2D labels
+    stats.update();  // This updates the performance stats
+}
+animate();
+
+// Handle window resize
+window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.setSize(window.innerWidth, window.innerHeight);  // Adjust label renderer size
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+});
+    </script>
+
+</body>
+</html>
