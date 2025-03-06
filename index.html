@@ -188,7 +188,7 @@ loadFolder.add({loadModel: () => {
         console.clear();
         logs = [];
         const selectedFile = modelController.getValue();
-        loadSTLFile('/models'+selectedFile).then((data) => {
+        loadSTLFile('models'+selectedFile).then((data) => {
             // Store the loaded mesh in loadedMesh variable
             loadedMesh = data.mesh;
             originalPosition = data.originalPosition;
