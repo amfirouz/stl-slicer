@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Three.js with Controls</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Three.js with Controls</title>
 
-    <!-- Importmap for the modules -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/build/three.module.min.js",
-                "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/controls/OrbitControls.js",
-                "three/examples/jsm/Addons.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/Addons.js",
-                "three/addons/libs/lil-gui.module.min.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/lil-gui.module.min.js",
-                "three/examples/jsm/libs/stats.module.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/stats.module.js",
-                "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.9.0/build/index.module.min.js",
-                "jszip": "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"
-            }
+<!-- Importmap for the modules -->
+<script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/build/three.module.min.js",
+            "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/controls/OrbitControls.js",
+            "three/examples/jsm/Addons.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/Addons.js",
+            "three/addons/libs/lil-gui.module.min.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/lil-gui.module.min.js",
+            "three/examples/jsm/libs/stats.module.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/stats.module.js",
+            "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.9.0/build/index.module.min.js"
+            "jszip": "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"
         }
-        </script>
+    }
+</script>
 
 </head>
 <body>
@@ -35,7 +35,7 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/Addons.js';
 import { MeshBVH, acceleratedRaycast } from 'three-mesh-bvh';
 import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
-import JSZip from "jszip";
+import { JSZip } from 'jszip'
 
 //#region Setup the scene
 // Initialize Stats.js
@@ -53,7 +53,6 @@ stats.dom.style.transformOrigin = 'top left'; // Keep the scaling origin at the 
 // Create the scene, camera, and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.up.set(0,0,1);
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
@@ -80,7 +79,68 @@ controls.enableDamping = true;
 // Call createPlanesAndLabels from planeSetup.js to add planes and labels
 const width = 10;
 const height = 10;
-const { planeXY, planeXZ, planeYZ } = createPlanesAndLabels(scene, width, height);
+const materialXY = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide, opacity: 0.3, transparent: true,
+depthWrite: false,  // Avoids writing to the depth buffer for transparency
+depthTest: true     // Ensures proper transparency rendering behind other objects
+});
+const materialXZ = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide, opacity: 0.3, transparent: true,
+depthWrite: false,  // Avoids writing to the depth buffer for transparency
+depthTest: true     // Ensures proper transparency rendering behind other objects
+});
+const materialYZ = new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide, opacity: 0.3, transparent: true,
+depthWrite: false,  // Avoids writing to the depth buffer for transparency
+depthTest: true     // Ensures proper transparency rendering behind other objects
+});
+
+// Plane geometry
+const planeGeometry = new THREE.PlaneGeometry(width * 2, height * 2);
+
+// Create the planes
+const planeXY = new THREE.Mesh(planeGeometry, materialXY);
+const planeXZ = new THREE.Mesh(planeGeometry, materialXZ);
+const planeYZ = new THREE.Mesh(planeGeometry, materialYZ);
+
+// Rotate the planes correctly
+planeXY.rotation.z = 0;               // XY Plane (no rotation needed)
+planeXZ.rotation.x = Math.PI / 2;      // XZ Plane (rotate 90° around X-axis)
+planeYZ.rotation.y = Math.PI / 2;      // YZ Plane (rotate 90° around Y-axis)
+
+// Position planes correctly (keeping them centered at origin)
+planeXY.position.set(0, 0, 0);
+planeXZ.position.set(0, 0, 0);
+planeYZ.position.set(0, 0, 0);
+
+// Add planes to the scene
+scene.add(planeXY);
+scene.add(planeXZ);
+scene.add(planeYZ);
+
+// Function to create labels
+function createLabel(text, position) {
+const labelDiv = document.createElement('div');
+labelDiv.className = 'label';
+labelDiv.style.position = 'absolute';
+labelDiv.style.color = 'white';
+labelDiv.style.fontSize = '20px';
+labelDiv.style.pointerEvents = 'none'; // Ensure labels don't block interactions
+labelDiv.innerText = text;
+
+const labelObject = new CSS2DObject(labelDiv);
+labelObject.position.set(position.x, position.y, position.z);
+
+return labelObject;
+}
+
+// Labels for X, Y, Z axes with proper spacing
+const labelSpacing = 1.5; // Increased spacing for better readability
+const labelX = createLabel('X', new THREE.Vector3(width + labelSpacing, 0, 0));  // Label for X at the edge of XY
+const labelY = createLabel('Y', new THREE.Vector3(0, height + labelSpacing, 0)); // Label for Y at the edge of XZ
+const labelZ = createLabel('Z', new THREE.Vector3(0, 0, width + labelSpacing));  // Label for Z at the edge of YZ
+
+// Add the labels to the scene
+scene.add(labelX);
+scene.add(labelY);
+scene.add(labelZ);
 // Create an AxesHelper with a size of 5 (can be adjusted)
 const axesHelper = new THREE.AxesHelper(10);
 scene.add(axesHelper);
@@ -799,7 +859,7 @@ window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 });
-    </script>
+</script>
 
 </body>
 </html>
