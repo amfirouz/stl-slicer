@@ -1,29 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Three.js with Controls</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js with Controls</title>
 
-<!-- Importmap for the modules -->
-<script type="importmap">
-    {
-        "imports": {
-            "three": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/build/three.module.min.js",
-            "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/controls/OrbitControls.js",
-            "three/examples/jsm/Addons.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/Addons.js",
-            "three/addons/libs/lil-gui.module.min.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/lil-gui.module.min.js",
-            "three/examples/jsm/libs/stats.module.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/stats.module.js",
-            "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.9.0/build/index.module.min.js",
-            "jszip": "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"
+    <!-- Importmap for the modules -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/build/three.module.min.js",
+                "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/controls/OrbitControls.js",
+                "three/examples/jsm/Addons.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/Addons.js",
+                "three/addons/libs/lil-gui.module.min.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/lil-gui.module.min.js",
+                "three/examples/jsm/libs/stats.module.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/stats.module.js",
+                "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.9.0/build/index.module.min.js"
+            }
         }
-    }
-</script>
+        </script>
 
 </head>
 <body>
-<!-- The canvas for the 3D scene will be automatically added here -->
-<script type="module">
+    <h1>Three.js with Orbit Controls</h1>
+
+    <!-- The canvas for the 3D scene will be automatically added here -->
+    <script type="module">
 // Import Three.js and OrbitControls
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -35,7 +36,6 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/Addons.js';
 import { MeshBVH, acceleratedRaycast } from 'three-mesh-bvh';
 import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
-import { JSZip } from 'jszip';
 
 //#region Setup the scene
 // Initialize Stats.js
@@ -80,17 +80,17 @@ controls.enableDamping = true;
 const width = 10;
 const height = 10;
 const materialXY = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide, opacity: 0.3, transparent: true,
-depthWrite: false,  // Avoids writing to the depth buffer for transparency
-depthTest: true     // Ensures proper transparency rendering behind other objects
-});
-const materialXZ = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide, opacity: 0.3, transparent: true,
-depthWrite: false,  // Avoids writing to the depth buffer for transparency
-depthTest: true     // Ensures proper transparency rendering behind other objects
-});
-const materialYZ = new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide, opacity: 0.3, transparent: true,
-depthWrite: false,  // Avoids writing to the depth buffer for transparency
-depthTest: true     // Ensures proper transparency rendering behind other objects
-});
+        depthWrite: false,  // Avoids writing to the depth buffer for transparency
+        depthTest: true     // Ensures proper transparency rendering behind other objects
+    });
+    const materialXZ = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide, opacity: 0.3, transparent: true,
+        depthWrite: false,  // Avoids writing to the depth buffer for transparency
+        depthTest: true     // Ensures proper transparency rendering behind other objects
+     });
+    const materialYZ = new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide, opacity: 0.3, transparent: true,
+        depthWrite: false,  // Avoids writing to the depth buffer for transparency
+        depthTest: true     // Ensures proper transparency rendering behind other objects
+     });
 
 // Plane geometry
 const planeGeometry = new THREE.PlaneGeometry(width * 2, height * 2);
@@ -117,18 +117,18 @@ scene.add(planeYZ);
 
 // Function to create labels
 function createLabel(text, position) {
-const labelDiv = document.createElement('div');
-labelDiv.className = 'label';
-labelDiv.style.position = 'absolute';
-labelDiv.style.color = 'white';
-labelDiv.style.fontSize = '20px';
-labelDiv.style.pointerEvents = 'none'; // Ensure labels don't block interactions
-labelDiv.innerText = text;
+    const labelDiv = document.createElement('div');
+    labelDiv.className = 'label';
+    labelDiv.style.position = 'absolute';
+    labelDiv.style.color = 'white';
+    labelDiv.style.fontSize = '20px';
+    labelDiv.style.pointerEvents = 'none'; // Ensure labels don't block interactions
+    labelDiv.innerText = text;
 
-const labelObject = new CSS2DObject(labelDiv);
-labelObject.position.set(position.x, position.y, position.z);
+    const labelObject = new CSS2DObject(labelDiv);
+    labelObject.position.set(position.x, position.y, position.z);
 
-return labelObject;
+    return labelObject;
 }
 
 // Labels for X, Y, Z axes with proper spacing
@@ -158,14 +158,9 @@ let loadedMesh = null;
 const voxelSize = 0.1;
 const gridSize = 0.1;
 const threshold = 0.1;
+let updateDelay = 50; // Delay in milliseconds (adjust as needed)
 THREE.Mesh.prototype.raycast = acceleratedRaycast;
 dummy = new THREE.Object3D();
-const material = new THREE.MeshLambertMaterial({
-    color: 0xff0000, // white color
-    side: THREE.DoubleSide, 
-    transparent: true, // Allow transparency
-    opacity: 1 // Initial opacity
-});
 // Variables to store original transformation
 let originalPosition = new THREE.Vector3();
 let originalRotation = new THREE.Euler();
@@ -177,15 +172,10 @@ const gui = new GUI();
 
 // Available STL files in the dropdown
 const files = [
-    "/models/stl/heart.stl",
-    "/models/stl/heart_reduced.stl",
-    "/models/stl/anatomical-heart.stl",
-    "/models/stl/Brain_from_MRI.stl",
-    "/models/stl/Brain_from_MRI_reduced.stl",
-    "/models/stl/low_poly_yellow_cat.stl",
-    "/models/stl/middle.stl",
-    "/models/stl/sample.stl",
-    "/models/stl/pelvis_reduced.stl"
+    "/heart.stl",
+    "/heart_reduced.stl",
+    "/middle.stl",
+    "/sample.stl"
 ];
 
 // Create a file selector in the GUI
@@ -198,7 +188,7 @@ loadFolder.add({loadModel: () => {
         console.clear();
         logs = [];
         const selectedFile = modelController.getValue();
-        loadSTLFile(selectedFile).then((data) => {
+        loadSTLFile('models'+selectedFile).then((data) => {
             // Store the loaded mesh in loadedMesh variable
             loadedMesh = data.mesh;
             originalPosition = data.originalPosition;
@@ -216,73 +206,27 @@ loadFolder.add({loadModel: () => {
 const transformControl = new TransformControls(camera, renderer.domElement);
 
   //#region Visibility Controls for planes, model and transform controls
-planeXZ.visible = false;
-planeYZ.visible = false;
-const visibilityControl = {
-    visible: true,
-    XYvisible: true,
-    XZvisible: false,
-    YZvisible: false
-};
-const planeFolder = gui.addFolder('Plane Settings');
-    planeFolder.add(visibilityControl, 'XYvisible').name('Plane XY').onChange(function () {
-    planeXY.visible = visibilityControl.XYvisible;
-    if(instancedMesh){
-        scheduleVoxelUpdate();
-    }
-});
-planeFolder.add(visibilityControl, 'XZvisible').name('Plane XZ').onChange(function () {
-    planeXZ.visible = visibilityControl.XZvisible;
-    if(instancedMesh){
-        scheduleVoxelUpdate();
-    }
-});
-planeFolder.add(visibilityControl, 'YZvisible').name('Plane YZ').onChange(function () {
-    planeYZ.visible = visibilityControl.YZvisible;
-    if(instancedMesh){
-        scheduleVoxelUpdate();
-    }
-});
+    planeXZ.visible = false;
+    planeYZ.visible = false;
+  const visibilityControl = {
+    visible: true
+  };
+  const planeFolder = gui.addFolder('Plane Settings');
+  planeFolder.add(visibilityControl, 'visible').name('Plane XY Visible').onChange(function () {
+    planeXY.visible = visibilityControl.visible;
+  });
+  planeFolder.add(visibilityControl, 'visible').name('Plane XZ Visible').onChange(function () {
+    planeXZ.visible = visibilityControl.visible;
+  });
+  planeFolder.add(visibilityControl, 'visible').name('Plane YZ Visible').onChange(function () {
+    planeYZ.visible = visibilityControl.visible;
+  });
 // Add visibility toggle inside another folder
-const viewFolder = gui.addFolder('Visibility');
-    viewFolder.add(visibilityControl, 'visible').name('Model Visible').onChange(function () {
-if (loadedMesh) {
-    loadedMesh.visible = visibilityControl.visible;
-}
-});
-
-// If it's a material that supports transparency (like MeshStandardMaterial), enable it
-material.transparent = true;
-
-// Create an object to hold the opacity property
-const meshSettings = {
-    opacity: material.opacity // Set the initial opacity value
-};
-
-// Add the opacity control to the GUI
-viewFolder.add(meshSettings, 'opacity', 0, 1, 0.01).name('Model Opacity').onChange((value) => {
-    material.opacity = value;
-    material.needsUpdate = true; // Refresh the material
-});
-
-// Ensure the planes have a transparent material
-planeXY.material.transparent = true;
-planeXZ.material.transparent = true;
-planeYZ.material.transparent = true;
-
-// Create an object to hold opacity values
-const planeOpacity = {
-    opacity: 0.3 // Initial opacity
-};
-
-// Add the opacity control to the GUI
-viewFolder.add(planeOpacity, 'opacity', 0, 1, 0.01).name('Plane Opacity').onChange((value) => {
-    planeXY.material.opacity = value;
-    planeXZ.material.opacity = value;
-    planeYZ.material.opacity = value;
-    planeXY.material.needsUpdate = true;
-    planeXZ.material.needsUpdate = true;
-    planeYZ.material.needsUpdate = true;
+const viewFolder = gui.addFolder('Model Visibility');
+viewFolder.add(visibilityControl, 'visible').name('Model Visible').onChange(function () {
+    if (loadedMesh) {
+        loadedMesh.visible = visibilityControl.visible;
+    }
 });
 
 viewFolder.add(visibilityControl, 'visible').name('Controls Visible').onChange(function () {
@@ -310,34 +254,6 @@ transformControl.addEventListener('objectChange', () => {
     }
 });
 
-// Attach event listener to TransformControls for live updates
-transformControl.addEventListener('objectChange', () => {
-    // Trigger an update when the mesh is transformed (moved, scaled, rotated)
-    scheduleVoxelUpdate();
-});
-
-window.addEventListener('keydown', (event) => {
-    switch (event.key) {
-        case 'r': 
-            transformControl.setMode("rotate");
-            transformControl.showX = true;
-            transformControl.showY = true;
-            transformControl.showZ = true;
-            break;
-        case 't': 
-            transformControl.setMode("translate");
-            transformControl.showX = true;
-            transformControl.showY = true;
-            transformControl.showZ = true;
-            break;
-        case 's': 
-            transformControl.setMode("scale");
-            transformControl.showX = false;
-            transformControl.showY = true;
-            transformControl.showZ = false;
-            break;
-    }
-});
 // GUI Controls
 const guiControls = {
 resetModel: function () {
@@ -345,186 +261,76 @@ resetModel: function () {
         loadedMesh.position.copy(originalPosition);
         loadedMesh.rotation.copy(originalRotation);
         loadedMesh.scale.copy(originalScale);
-        if(instancedMesh) {
-            scene.remove(instancedMesh);
-            instancedMesh.geometry.dispose();
-            instancedMesh.material.dispose();
-        }
-        if (guiControls.liveUpdate) {
-            // When live update is enabled, start updating the intersection continuously
-            scheduleVoxelUpdate();
-        }
+        updateVoxelization();
         console.log("Model reset to original position");
     }
-},
-updateSlice: function () {
+}
+};
+
+// Add Reset Button to GUI
+loadFolder.add(guiControls, 'resetModel').name("Reset Model");
+gui.add({ 
+    update: () => {
         console.log("Update button pressed");
         if (!loadedMesh) {
             console.warn("No loaded mesh. Please load a model first.");
             return;
         }
+
         console.log("Starting voxel update...");
         updateVoxelization();
-    },
-liveUpdate: false,
-};
-// Add Reset Button to GUI
-loadFolder.add(guiControls, 'resetModel').name("Reset Model");
+    }
+}, 'update').name('Update Intersection');
 
-const sliceFolder = gui.addFolder("Slice Controls")
-sliceFolder.add(guiControls, 'updateSlice').name("Update Slice")
-
+   
+const liveUpdateControl = { liveUpdate: false };
 // Add the checkbox to the GUI for enabling/disabling live updates
-sliceFolder.add(guiControls, 'liveUpdate').name('Live Update').onChange(() => {
-    if (guiControls.liveUpdate) {
+gui.add(liveUpdateControl, 'liveUpdate').name('Live Update').onChange(() => {
+    if (liveUpdateControl.liveUpdate) {
         // When live update is enabled, start updating the intersection continuously
         scheduleVoxelUpdate();
     }
 });
-
 let updateTimeout = null;
-let updateDelay = 50; // Delay in milliseconds (adjust as needed)
-sliceFolder.add({ updateDelay: 50 }, 'updateDelay', 0, 100, 1).name('Update Delay (ms)').onChange((value) => {
+
+gui.add({ updateDelay: 50 }, 'updateDelay', 10, 100, 1).name('Update Delay (ms)').onChange((value) => {
     console.log('Update Delay set to: ' + value);
     // Update the global updateDelay variable
     updateDelay = value;  // Directly update the global variable
 });
-
-const imageSliceFolder = gui.addFolder("Image Slicer")
-let HU = 40;
-const scan = [
-    'CT',
-    'MRI',
-    'Ultrasound',
-    'PET'
-];
-const tissue =[
-    'Heart',
-    'Brain'
-];
-const scanType = imageSliceFolder.add({ scan: scan[0] }, 'scan', scan).name('Select Scan Type (Only CT supported)');
-const tissueType = imageSliceFolder.add({ tissue: tissue[0] }, 'tissue', tissue).name('Select Tissue Type').onChange((value) => {
-    if(scanType.getValue() == 'CT') {
-        console.log('This is a CT scan')
-        switch(value){
-            case "Heart":
-                HU = 40;
-                console.log('Tissue: Heart')
-                break;
-            case "Brain":
-                HU = 40;
-                console.log('Tissue: Brain')
-                break;
-        }
-    } else {
-        console.log('Only CT scans are supported')
-    }
-});
-
-if(scanType.getValue() == 'CT') {
-    console.log('This is a CT scan')    
-} else {
-    console.log('Only CT scans are supported')
-}
-// Define available options for the dropdown
-const options = ['XY', 'XZ', 'YZ'];
-
-// Define a container for the selected option
-let selectedOption = options[0]; // Default to 'XY'
-
-// Add a dropdown to the GUI
-const guiObject = { selectedOption };  // Using an object to bind the dropdown
-imageSliceFolder.add(guiObject, 'selectedOption', options).name('Select plane to slice');
-
-// New button for generating binary images from the slice
-const actions = {
-    showPopup: () => {
-        const userResponse = confirm("Create a zip file of slices?");
-        if (userResponse) {
-            console.log("User clicked YES");
-            if (!loadedMesh) {
-                console.warn("No loaded mesh. Please load a model first.");
-                return;
-            }
-    
-            console.log("Generating binary image from the slice...");
-            console.log(guiObject.selectedOption); // Access the value from the bound object
-            
-            // Call the function to create the binary image based on selectedOption
-            if (guiObject.selectedOption == 'XY') {
-                createBinaryImagesForSlices(true, false, false);
-            }
-            if (guiObject.selectedOption == 'XZ') {
-                createBinaryImagesForSlices(false, true, false);
-            }
-            if (guiObject.selectedOption == 'YZ') {
-                createBinaryImagesForSlices(false, false, true);
-            }
-        } else {
-            console.log("User clicked NO");
-        }
-    }
-};
-imageSliceFolder.add(actions, 'showPopup').name("Generate Image Slices");
 
 //#region functions
 // Create a function to load the selected STL file
 function loadSTLFile(fileName) {
     return new Promise((resolve, reject) => {
         const loader = new STLLoader();
-
-        // Remove previous mesh if exists
         if (loadedMesh) {
-            scene.remove(loadedMesh);
-            transformControl.detach(loadedMesh);
+            scene.remove(loadedMesh);  // Remove the previous mesh from the scene
+            transformControl.detach(loadedMesh);  // Detach the transform controls from the previous mesh
             loadedMesh.geometry.dispose();
             loadedMesh.material.dispose();
         }
         if (instancedMesh) {
-            scene.remove(instancedMesh);
-            transformControl.detach(instancedMesh);
+            scene.remove(instancedMesh);  // Remove the previous mesh from the scene
+            transformControl.detach(instancedMesh);  // Detach the transform controls from the previous mesh
             instancedMesh.geometry.dispose();
             instancedMesh.material.dispose();
         }
-
         loader.load(fileName, function (geometry) {
-            console.log("STL Geometry Loaded:", geometry);
-            // Simplify mesh if needed
-            /*
-            const faceCount = geometry.attributes.position.count / 3;
-            console.log(`Current face count: ${faceCount}`);
-            const maxFaces = 50000
-            // If the face count exceeds the threshold, simplify the mesh
-            if (faceCount > maxFaces) {
-                const reductionFactor = maxFaces / faceCount; // Factor to reduce the faces by
-                console.log(`Reduction factor: ${reductionFactor}`);
-        
-                // Ensure the target face count doesn't go below 3 (min number of faces for a mesh)
-                const targetCount = Math.floor(faceCount * reductionFactor);
-                console.log(`Target face count: ${targetCount}`);
-                const modifier = new SimplifyModifier();
-                const simplifiedGeometry = modifier.modify(geometry, Math.floor(targetCount * 3));
-
-                // Dispose of the old geometry and assign the new simplified geometry
-                geometry.dispose();
-                mesh.geometry = simplifiedGeometry;
-
-                console.log(`Mesh simplified to ${simplifiedGeometry.attributes.position.count / 3} faces.`);
-            } else {
-                console.log('Mesh does not require simplification.');
-            }*/
-
             // Compute bounding box to center the model
+            console.log("STL Geometry Loaded:", geometry);
+
+            //Center the model
             geometry.computeBoundingBox();
             const bbox = geometry.boundingBox;
             const center = new THREE.Vector3();
             bbox.getCenter(center);
             geometry.translate(-center.x, -center.y, -center.z);
             console.log("Model Center Position:", center);
-
-            // Compute smooth shading
+            // Compute smooth shading and create the mesh
             geometry.computeVertexNormals();
-            let mesh = new THREE.Mesh(geometry, material);
+            const stlMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+            const mesh = new THREE.Mesh(geometry, stlMaterial);
 
             // Apply initial transformations
             mesh.rotation.set(0, 0, 0);
@@ -539,13 +345,36 @@ function loadSTLFile(fileName) {
             // Add the new mesh to the scene
             scene.add(mesh);
             console.log("Mesh successfully added to the scene:", mesh);
-            transformControl.attach(mesh);
+            transformControl.attach(mesh);  // Attach the transform controls to the new mesh
             transformControl.setMode("rotate");
+
+            window.addEventListener('keydown', (event) => {
+                switch (event.key) {
+                    case 'r': 
+                        transformControl.setMode("rotate");
+                        transformControl.showX = true;
+                        transformControl.showY = true;
+                        transformControl.showZ = true;
+                        break;
+                    case 't': 
+                        transformControl.setMode("translate");
+                        transformControl.showX = true;
+                        transformControl.showY = true;
+                        transformControl.showZ = true;
+                        break;
+                    case 's': 
+                        transformControl.setMode("scale");
+                        transformControl.showX = false;
+                        transformControl.showY = true;
+                        transformControl.showZ = false;
+                        break;
+                }
+            });
 
             gizmo = transformControl.getHelper();
             scene.add(gizmo);
 
-            // Resolve the promise with relevant data
+            // Resolve the promise with relevant data (mesh and original values)
             resolve({ mesh, originalPosition, originalRotation, originalScale });
         },
         undefined, // Progress callback (optional)
@@ -554,16 +383,16 @@ function loadSTLFile(fileName) {
             reject(error);
         });
     });
-}
+};
 
 // Optimised voxelisation with plane slicing
-function voxelizeMesh(mesh, gridSize = 0.1, threshold = 0.1, XY = true, XZ = false, YZ = false,series = false) {
+function voxelizeMesh(mesh, gridSize = 0.1, threshold = 0.1) {
     if (!mesh || !mesh.geometry) {
         console.warn('No mesh loaded.');
         return;
     }
 
-    const bvh = new MeshBVH(mesh.geometry);
+    const bvh = new MeshBVH(mesh.geometry, { lazyGeneration: false });
     mesh.geometry.boundsTree = bvh;
     
     const boundingBox = new THREE.Box3().setFromObject(mesh);
@@ -574,71 +403,24 @@ function voxelizeMesh(mesh, gridSize = 0.1, threshold = 0.1, XY = true, XZ = fal
     console.clear();
     console.time("Voxelization time:");
     voxels = []; // Reset the voxel list
+
     let count = 0;
     let count_total = 0;
     let totalVoxels = Math.ceil((maxX - minX) / gridSize) * Math.ceil((maxY - minY) / gridSize) * Math.ceil((maxZ - minZ) / gridSize);
     console.log(`Total voxels in slice: ${totalVoxels}`);
     
-    if (!series) {
-        if (XY){
-            for (let x = minX; x < maxX; x += gridSize) {
-                for (let y = minY; y < maxY; y += gridSize) {
-                    for (let z = (-threshold/2); z < (threshold/2); z += gridSize) {
-                        const voxelPosition = new THREE.Vector3(x + gridSize / 2, y + gridSize / 2, z + gridSize / 2);
-                        count_total ++
-                        if (isInsideMesh3D(voxelPosition, mesh )) {
-                            voxels.push({ position: voxelPosition });
-                            count ++;
-                        }
-                    }
+    for (let x = minX; x < maxX; x += gridSize) {
+        for (let y = minY; y < maxY; y += gridSize) {
+            for (let z = (-threshold/2); z < (threshold/2); z += gridSize) {
+                const voxelPosition = new THREE.Vector3(x + gridSize / 2, y + gridSize / 2, z + gridSize / 2);
+                count_total ++
+                if (isInsideMesh3D(voxelPosition, mesh )) {
+                    voxels.push({ position: voxelPosition });
+                    count ++;
                 }
             }
         }
-
-        if (XZ){
-            for (let x = minX; x < maxX; x += gridSize) {
-                for (let y = (-threshold/2); y < (threshold/2); y += gridSize) {
-                    for (let z = minZ; z < maxZ; z += gridSize) {
-                        const voxelPosition = new THREE.Vector3(x + gridSize / 2, y + gridSize / 2, z + gridSize / 2);
-                        count_total ++
-                        if (isInsideMesh3D(voxelPosition, mesh )) {
-                            voxels.push({ position: voxelPosition });
-                            count ++;
-                        }
-                    }
-                }
-            }
-        }    
-        
-        if (YZ){
-            for (let x = (-threshold/2); x < (threshold/2); x += gridSize) {
-                for (let y = minY; y < maxY; y += gridSize) {
-                    for (let z = minZ; z < maxZ; z += gridSize) {
-                        const voxelPosition = new THREE.Vector3(x + gridSize / 2, y + gridSize / 2, z + gridSize / 2);
-                        count_total ++
-                        if (isInsideMesh3D(voxelPosition, mesh )) {
-                            voxels.push({ position: voxelPosition });
-                            count ++;
-                        }
-                    }
-                }
-            }
-        } 
     }
-    if (series){
-        for (let x = minX; x < maxX; x += gridSize) {
-            for (let y = minY; y < maxY; y += gridSize) {
-                for (let z = minZ; z < maxZ; z += gridSize) {
-                    const voxelPosition = new THREE.Vector3(x + gridSize / 2, y + gridSize / 2, z + gridSize / 2);
-                    count_total ++
-                    if (isInsideMesh3D(voxelPosition, mesh )) {
-                        voxels.push({ position: voxelPosition });
-                        count ++;
-                    }
-                }
-            }
-        }
-    } 
 
     console.log(`Voxelization complete. Total voxels placed: ${count}/${count_total}`);
     console.timeEnd("Voxelization time:");
@@ -648,8 +430,8 @@ function voxelizeMesh(mesh, gridSize = 0.1, threshold = 0.1, XY = true, XZ = fal
 function isInsideMesh3D(pos, mesh, bvh) {
     const directions = [
         new THREE.Vector3(1, 0, 0), // X-axis
-        new THREE.Vector3(0, 1, 0), // Y-axis
-        new THREE.Vector3(0, 0, 1),  // Z-axis
+        //new THREE.Vector3(0, 1, 0), // Y-axis
+        //new THREE.Vector3(0, 0, 1)  // Z-axis
     ];
 
     let insideCount = 0;
@@ -664,7 +446,7 @@ function isInsideMesh3D(pos, mesh, bvh) {
     }
 
     // The voxel is considered inside if at least two out of three checks confirm it
-    return insideCount >= 3;
+    return insideCount >= directions.length;
 }
 
 function recreateVoxels() {
@@ -683,10 +465,10 @@ function updateVoxelization() {
         scene.remove(instancedMesh);
     }
 
-    voxelizeMesh(loadedMesh, gridSize, threshold,planeXY.visible,planeXZ.visible,planeYZ.visible);
+    voxelizeMesh(loadedMesh, gridSize, threshold);
 
     voxelGeometry = new THREE.BoxGeometry(voxelSize, voxelSize, voxelSize);
-    voxelMaterial = new THREE.MeshBasicMaterial({ color: 0xeeee22 });
+    voxelMaterial = new THREE.MeshLambertMaterial({ color: new THREE.Color(0xeeee22) });
     instancedMesh = new THREE.InstancedMesh(voxelGeometry, voxelMaterial, voxels.length);
     instancedMesh.castShadow = true;
     instancedMesh.receiveShadow = true;
@@ -696,139 +478,10 @@ function updateVoxelization() {
 
 // Debounced update function
 function scheduleVoxelUpdate() {
-    if (!guiControls.liveUpdate) return;
+    if (!liveUpdateControl.liveUpdate) return;
     
     clearTimeout(updateTimeout); // Cancel previous update
     updateTimeout = setTimeout(updateVoxelization, updateDelay);
-}
-
-function createBinaryImagesForSlices(XY,XZ,YZ) {
-    if (!loadedMesh) {
-        console.warn("No loaded mesh.");
-        return;
-    }
-
-    const zip = new JSZip();
-
-    const width = 1024;
-    const height = 1024;
-    const padding = 50;
-
-    voxelizeMesh(loadedMesh, gridSize, threshold, XY, XZ, YZ, true);
-
-    const boundingBox = new THREE.Box3().setFromObject(loadedMesh);
-    const minX = boundingBox.min.x;
-    const minY = boundingBox.min.y;
-    const minZ = boundingBox.min.z;
-    const maxX = boundingBox.max.x;
-    const maxY = boundingBox.max.y;
-    const maxZ = boundingBox.max.z;
-
-    console.log(`Bounding box dimensions:`);
-    console.log(`minX: ${minX}, minY: ${minY}, minZ: ${minZ}`);
-    console.log(`maxX: ${maxX}, maxY: ${maxY}, maxZ: ${maxZ}`);
-
-    const numVoxelsX = Math.floor((maxX - minX)/ gridSize);
-    const numVoxelsY = Math.floor((maxY - minY) / gridSize);
-    const numVoxelsZ = Math.floor((maxZ - minZ) / gridSize);
-
-    console.log(`Voxel grid size: ${numVoxelsX} x ${numVoxelsY} x ${numVoxelsZ}`);
-    console.log(`Grid size (in units): ${gridSize}`);
-
-    const scaleX = (width - 2 * padding) / numVoxelsX;
-    const scaleY = (height - 2 * padding) / numVoxelsY;
-    const scale = Math.min(scaleX, scaleY);
-    
-    let count = 0;
-
-    // Function to add Gaussian noise
-    function addGaussianNoise(value, mean = 0, stdDev = 30) {
-        let noise = Math.random() * stdDev + mean;
-        noise = Math.max(0, Math.min(255, value + noise)); // Keep within valid range
-        return Math.floor(noise);
-    }
-    console.log(XY);
-    console.log(XZ);
-    console.log(YZ);
-    let iMin, iMax, sliceAxis;
-    if (XY){
-        iMin = minZ;
-        iMax = maxZ;
-        sliceAxis = 'z'
-    };
-    if (XZ){
-        iMin = minY;
-        iMax = maxY;
-        sliceAxis = 'y'
-    };
-    if (YZ){
-        iMin = minX;
-        iMax = maxX;
-        sliceAxis = 'x'
-    };
-    console.log(iMin);
-    console.log(iMax);
-
-    for (let i = iMin; i <= iMax; i += gridSize) {
-        console.log(`Processing slice at ${sliceAxis} = ${i}`);
-
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = width;
-        canvas.height = height;
-
-        ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, width, height);
-
-        voxels.forEach((voxel) => {
-            const voxelPosition = voxel.position;
-            if (XY){
-                if (Math.abs(voxelPosition.z - i) <= gridSize) {
-                    const x = (voxelPosition.x - minX) / gridSize * scale + padding;
-                    const y = (voxelPosition.y - minY) / gridSize * scale + padding;
-    
-                    // Apply Gaussian noise to grayscale intensity
-                    const noisyValue = addGaussianNoise(HU, 0, 50);
-                    ctx.fillStyle = `rgb(${noisyValue},${noisyValue},${noisyValue})`;
-                    ctx.fillRect(x, y, scale + 1, scale + 1);
-                }
-            };
-            if (XZ){
-                if (Math.abs(voxelPosition.y - i) <= gridSize) {
-                    const x = (voxelPosition.x - minX) / gridSize * scale + padding;
-                    const z = (voxelPosition.z - minY) / gridSize * scale + padding;
-    
-                    // Apply Gaussian noise to grayscale intensity
-                    const noisyValue = addGaussianNoise(HU, 0, 50);
-                    ctx.fillStyle = `rgb(${noisyValue},${noisyValue},${noisyValue})`;
-                    ctx.fillRect(x, z, scale + 1, scale + 1);
-                }
-            };
-            if (YZ){
-                if (Math.abs(voxelPosition.x - i) <= gridSize) {
-                    const y = (voxelPosition.y - minY) / gridSize * scale + padding;
-                    const z = (voxelPosition.z - minZ) / gridSize * scale + padding;
-    
-                    // Apply Gaussian noise to grayscale intensity
-                    const noisyValue = addGaussianNoise(HU, 0, 50);
-                    ctx.fillStyle = `rgb(${noisyValue},${noisyValue},${noisyValue})`;
-                    ctx.fillRect(y, z, scale + 1, scale + 1);
-                }
-            };
-        });
-
-        zip.file(`slice_z_${count}.png`, canvas.toDataURL('image/png').split(',')[1], { base64: true });
-        count++;
-    }
-
-    zip.generateAsync({ type: "blob" }).then(function (content) {
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(content);
-        link.download = 'slices.zip';
-        link.click();
-
-        console.log("ZIP file with binary images generated and download started.");
-    });
 }
 
 // Utility function to log and store messages and variables
@@ -837,6 +490,12 @@ function logAndStore(...args) {
     logs.push(args); // Store the message/variables in the logs array
 }
 //#endregion
+
+// Attach event listener to TransformControls for live updates
+transformControl.addEventListener('objectChange', () => {
+    // Trigger an update when the mesh is transformed (moved, scaled, rotated)
+    scheduleVoxelUpdate();
+});
 
 // Position the camera
 camera.position.set(3, 3, 5);
@@ -859,7 +518,7 @@ window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 });
-</script>
+    </script>
 
 </body>
 </html>
