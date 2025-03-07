@@ -176,15 +176,10 @@ const gui = new GUI();
 
 // Available STL files in the dropdown
 const files = [
-    "/models/stl/heart.stl",
-    "/models/stl/heart_reduced.stl",
-    "/models/stl/anatomical-heart.stl",
-    "/models/stl/Brain_from_MRI.stl",
-    "/models/stl/Brain_from_MRI_reduced.stl",
-    "/models/stl/low_poly_yellow_cat.stl",
-    "/models/stl/middle.stl",
-    "/models/stl/sample.stl",
-    "/models/stl/pelvis_reduced.stl"
+    "heart.stl",
+    "heart_reduced.stl",
+    "middle.stl",
+    "sample.stl"
 ];
 
 // Create a file selector in the GUI
@@ -197,7 +192,7 @@ loadFolder.add({loadModel: () => {
         console.clear();
         logs = [];
         const selectedFile = modelController.getValue();
-        loadSTLFile(selectedFile).then((data) => {
+        loadSTLFile('models/'+selectedFile).then((data) => {
             // Store the loaded mesh in loadedMesh variable
             loadedMesh = data.mesh;
             originalPosition = data.originalPosition;
