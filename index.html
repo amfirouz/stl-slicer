@@ -14,15 +14,14 @@
                 "three/examples/jsm/Addons.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/Addons.js",
                 "three/addons/libs/lil-gui.module.min.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/lil-gui.module.min.js",
                 "three/examples/jsm/libs/stats.module.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/stats.module.js",
-                "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.9.0/build/index.module.min.js"
+                "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.9.0/build/index.module.min.js",
+                "jszip": "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"
             }
         }
         </script>
 
 </head>
 <body>
-    <h1>Three.js with Orbit Controls</h1>
-
     <!-- The canvas for the 3D scene will be automatically added here -->
     <script type="module">
 // Import Three.js and OrbitControls
@@ -36,6 +35,7 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/Addons.js';
 import { MeshBVH, acceleratedRaycast } from 'three-mesh-bvh';
 import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
+import { JSZip } from 'jszip';        
 
 //#region Setup the scene
 // Initialize Stats.js
