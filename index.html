@@ -9,15 +9,12 @@
     <script type="importmap">
         {
         "imports": {
-            "three": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/build/three.module.min.js",
-            "three/examples/jsm/controls/OrbitControls": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/controls/OrbitControls.js",
-            "three/examples/jsm/loaders/STLLoader": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/loaders/STLLoader.js",
-            "three/examples/jsm/libs/lil-gui.module.min": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/lil-gui.module.min.js",
-            "three/examples/jsm/libs/stats.module": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/stats.module.js",
-            "three/examples/jsm/renderers/CSS2DRenderer": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/renderers/CSS2DRenderer.js",
-            "three/examples/jsm/controls/TransformControls": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/controls/TransformControls.js",
-            "three/examples/jsm/geometries/RoundedBoxGeometry": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/geometries/RoundedBoxGeometry.js",
-            "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.9.0/build/index.module.min.js",
+                "three": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/build/three.module.min.js",
+                "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/controls/OrbitControls.js",
+                "three/examples/jsm/Addons.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/Addons.js",
+                "three/addons/libs/lil-gui.module.min.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/lil-gui.module.min.js",
+                "three/examples/jsm/libs/stats.module.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/stats.module.js",
+                "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.9.0/build/index.module.min.js"
             "jszip": "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"
             }
         }
@@ -28,16 +25,16 @@
 <!-- The canvas for the 3D scene will be automatically added here -->
 <script type="module">
     // Import Three.js and OrbitControls
-    import * as THREE from 'three';
-    import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-    import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
-    import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
-    import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer';
-    import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-    import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry';
-    import { MeshBVH, acceleratedRaycast } from 'three-mesh-bvh';
-    import { CSS2DObject } from 'three/examples/jsm/Addons.js';
-    import Stats from 'three/examples/jsm/libs/stats.module';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { STLLoader } from 'three/examples/jsm/Addons.js';
+import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+import { CSS2DRenderer } from 'three/examples/jsm/Addons.js';
+import { TransformControls } from 'three/examples/jsm/Addons.js';
+import { RoundedBoxGeometry } from 'three/examples/jsm/Addons.js';
+import { MeshBVH, acceleratedRaycast } from 'three-mesh-bvh';
+import { CSS2DObject } from 'three/examples/jsm/Addons.js';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
     //import * as JSZip from 'jszip';
 //#region Setup the scene
 // Initialize Stats.js
