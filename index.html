@@ -391,7 +391,7 @@ sliceFolder.add({ updateDelay: 50 }, 'updateDelay', 0, 100, 1).name('Update Dela
     updateDelay = value;  // Directly update the global variable
 });
 
-const imageSliceFolder = gui.addFolder("Image Slicer")
+/*const imageSliceFolder = gui.addFolder("Image Slicer")
 let HU = 40;
 const scan = [
     'CT',
@@ -435,7 +435,7 @@ let selectedOption = options[0]; // Default to 'XY'
 
 // Add a dropdown to the GUI
 const guiObject = { selectedOption };  // Using an object to bind the dropdown
-imageSliceFolder.add(guiObject, 'selectedOption', options).name('Select plane to slice');
+//imageSliceFolder.add(guiObject, 'selectedOption', options).name('Select plane to slice');
 
 // New button for generating binary images from the slice
 const actions = {
@@ -466,7 +466,7 @@ const actions = {
         }
     }
 };
-imageSliceFolder.add(actions, 'showPopup').name("Generate Image Slices");
+imageSliceFolder.add(actions, 'showPopup').name("Generate Image Slices");*/
 
 //#region functions
 // Create a function to load the selected STL file
