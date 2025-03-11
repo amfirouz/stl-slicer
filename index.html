@@ -14,8 +14,7 @@
                 "three/examples/jsm/Addons.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/Addons.js",
                 "three/addons/libs/lil-gui.module.min.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/lil-gui.module.min.js",
                 "three/examples/jsm/libs/stats.module.js": "https://cdn.jsdelivr.net/gh/mrdoob/three.js@dev/examples/jsm/libs/stats.module.js",
-                "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.9.0/build/index.module.min.js",
-                "jszip": "https://cdn.jsdelivr.net/npm/@kant2002/jszip@2.7.1/lib/index.min.js"
+                "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.9.0/build/index.module.min.js"
             }
         }
     </script>
@@ -35,7 +34,7 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/Addons.js';
 import { MeshBVH, acceleratedRaycast } from 'three-mesh-bvh';
 import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
-import JSZip from 'jszip';
+//import JSZip from 'jszip';
 //# region Setup the scene
 // Initialize Stats.js
 const stats = new Stats();
@@ -52,6 +51,7 @@ stats.dom.style.transformOrigin = 'top left'; // Keep the scaling origin at the 
 // Create the scene, camera, and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.up.set(0,0,1);    
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
